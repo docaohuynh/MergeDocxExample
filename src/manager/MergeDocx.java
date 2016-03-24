@@ -2,6 +2,7 @@ package manager;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.apache.poi.util.IOUtils;
 import org.docx4j.jaxb.Context;
@@ -24,6 +25,13 @@ public class MergeDocx {
 		SaveToZipFile saver = new SaveToZipFile(target);
 		saver.save(os);
 	}
+	
+	public void mergeListDocx(List<InputStream> s1, OutputStream os) throws Exception {
+		WordprocessingMLPackage target = WordprocessingMLPackage.load(s1.get(0));
+		insertListDocx(target.getMainDocumentPart(), s1);
+		SaveToZipFile saver = new SaveToZipFile(target);
+		saver.save(os);
+	}
 
 	private static void insertDocx(MainDocumentPart main, byte[] bytes) throws Exception {
 		AlternativeFormatInputPart afiPart = new AlternativeFormatInputPart(
@@ -34,7 +42,34 @@ public class MergeDocx {
 
 		CTAltChunk chunk = Context.getWmlObjectFactory().createCTAltChunk();
 		chunk.setId(altChunkRel.getId());
+		
+		CTAltChunk chunk1 = Context.getWmlObjectFactory().createCTAltChunk();
+		chunk1.setId(altChunkRel.getId());
+		
+		CTAltChunk chunk2 = Context.getWmlObjectFactory().createCTAltChunk();
+		chunk2.setId(altChunkRel.getId());
 
 		main.addObject(chunk);
+		main.addObject(chunk1);
+		main.addObject(chunk2);
+	}
+	
+	private static void insertListDocx(MainDocumentPart main, List<InputStream> listDocx) throws Exception {
+		int i=0;
+		for(InputStream input : listDocx){
+			if(i != 0 ){
+				AlternativeFormatInputPart afiPart = new AlternativeFormatInputPart(
+						new PartName("/part" + (chunk++) + ".docx"));
+				System.out.println("count "+ i);
+				byte[] bytes = IOUtils.toByteArray(input);
+				afiPart.setContentType(new ContentType(CONTENT_TYPE));
+				afiPart.setBinaryData(bytes);
+				Relationship altChunkRel = main.addTargetPart(afiPart);
+				CTAltChunk chunk = Context.getWmlObjectFactory().createCTAltChunk();
+				chunk.setId(altChunkRel.getId());
+				main.addObject(chunk);
+			}
+			i++;
+		}
 	}
 }

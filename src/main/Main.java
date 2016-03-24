@@ -17,6 +17,7 @@ public class Main {
 	static String pathInput1File = "C:\\Users\\docaohuynh\\Google Drive\\MyProject\\Java\\Process\\doc1.docx";
 	static String pathInput2File = "C:\\Users\\docaohuynh\\Google Drive\\MyProject\\Java\\Process\\doc2.docx";
 	static String pathInput3File = "C:\\Users\\docaohuynh\\Google Drive\\MyProject\\Java\\Process\\doc3.docx";
+	static String pathInput4File = "C:\\Users\\docaohuynh\\Google Drive\\MyProject\\Java\\Process\\doc4.docx";
 	static String pathOutputFile = "C:\\Users\\docaohuynh\\Google Drive\\MyProject\\Java\\Process\\docfull.docx";
 
 	public static void main(String[] args) {
@@ -38,9 +39,19 @@ public class Main {
 			InputStream inputStream1 = new FileInputStream(new File(pathInput1File));
 			InputStream inputStream2 = new FileInputStream(new File(pathInput2File));
 			InputStream inputStream3 = new FileInputStream(new File(pathInput3File));
+			InputStream inputStream4 = new FileInputStream(new File(pathInput4File));
 			OutputStream outStream = new FileOutputStream(new File(pathOutputFile));
+			List<InputStream> input = new ArrayList<InputStream>();
+			input.add(inputStream1);
+			input.add(inputStream2);
+			input.add(inputStream3);
+			input.add(inputStream4);
+			
 			MergeDocx mergeDocx = new MergeDocx();
-			mergeDocx.mergeDocx(inputStream1, inputStream2, outStream);
+			mergeDocx.mergeListDocx(input, outStream);
+			/*InputStream inputStreamdone = new FileInputStream(new File(pathOutputFile));
+			OutputStream outStream2 = new FileOutputStream(new File(pathOutputFile));
+			mergeDocx.mergeDocx(inputStreamdone, inputStream3, outStream2);*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
